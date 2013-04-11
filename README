@@ -1,7 +1,8 @@
 NAME:
-  Vtable-Dumper - a tool to list content of virtual tables in a C++ shared library.
+  Vtable-Dumper - a tool to list content of virtual tables in a C++ shared library
   
-  It is intended for developers of software libraries and maintainers of Linux distributions who are interested in ensuring backward binary compatibility of a library.
+  It is intended for developers of software libraries and maintainers of Linux
+  distributions who are interested in ensuring backward binary compatibility
 
 INSTALL:
   sudo make install prefix=/usr
