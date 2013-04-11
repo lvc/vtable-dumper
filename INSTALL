@@ -1,0 +1,55 @@
+
+Copyright (C) 2013 ROSA Laboratory
+All rights reserved.
+
+
+RELEASE INFORMATION
+
+Project:           Vtable-Dumper
+Version:           1.0
+Date:              2013-04-11
+
+
+This file explains how to install and setup environment
+for the tool in your computer.
+
+
+Content:
+
+   1. Requirements for Linux and FreeBSD
+   2. Configuring and Installing
+   3. Running the Tool
+
+
+1. REQUIREMENTS FOR LINUX AND FREEBSD
+=====================================
+
+   1. libelf
+   2. libdl
+   3. libstdc++
+
+
+
+2. CONFIGURING AND INSTALLING
+=============================
+
+   This command will install a vtable-dumper program in the
+   PREFIX/bin system directory:
+
+     sudo make install prefix=PREFIX [/usr, /usr/local, ...]
+
+2.1 Remove
+
+     sudo make uninstall prefix=PREFIX
+
+
+
+3. RUNNING THE TOOL
+===================
+
+   1. vtable-dumper [options] file
+   2. For advanced usage, see output of --help option
+
+
+
+Enjoy!
