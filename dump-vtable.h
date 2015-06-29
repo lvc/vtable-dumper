@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2013 ROSA Laboratory
+ * Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory
+ * 
+ * Written by Andrey Ponomarenko
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License or the GNU Lesser

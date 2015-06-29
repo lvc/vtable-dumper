@@ -1,13 +1,13 @@
 
-Copyright (C) 2013 ROSA Laboratory
+Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory
 All rights reserved.
 
 
 RELEASE INFORMATION
 
 Project:           Vtable-Dumper
-Version:           1.0
-Date:              2013-04-11
+Version:           1.1
+Date:              2015-06-26
 
 
 This file explains how to install and setup environment
@@ -47,7 +47,7 @@ Content:
 3. RUNNING THE TOOL
 ===================
 
-   1. vtable-dumper [options] file
+   1. vtable-dumper [options] object
    2. For advanced usage, see output of --help option
 
 

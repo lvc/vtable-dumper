@@ -1,7 +1,8 @@
 /*
- * Vtable-Dumper 1.0
+ * Vtable-Dumper 1.1
  * A tool to list content of virtual tables in a shared library
- * Copyright (C) 2013 ROSA Laboratory
+ * 
+ * Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory
  * 
  * Written by Andrey Ponomarenko
  * 
@@ -32,7 +33,7 @@
 
 #include "dump-vtable.h"
 
-const char* TOOL_VERSION = "1.0";
+const char* TOOL_VERSION = "1.1";
 
 int opt_mangled = 0;
 int opt_demangled = 0;
@@ -201,7 +202,20 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     offset += step;
     if (dladdr(vttypeinfo, &dlainfo))
     {
-        printf("%d     (int (*)(...)) (& %s)\n", offset, dlainfo.dli_sname);
+        demngl = demangle(dlainfo.dli_sname);
+        if(opt_mangled==1 && opt_demangled==1)
+        {
+            printf("%d     (int (*)(...)) (& %s) [%s]\n", offset, demngl, dlainfo.dli_sname);
+        }
+        else if(opt_demangled==1)
+        {
+            printf("%d     (int (*)(...)) (& %s)\n", offset, demngl);
+        }
+        else
+        { // show mangled name by default
+            printf("%d     (int (*)(...)) (& %s)\n", offset, dlainfo.dli_sname);
+        }
+        free(demngl);
     }
     else
     {
@@ -229,6 +243,10 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
             if (dlainfo.dli_sname==NULL)
             {
                 printf("(int (*)(...)) %p\n", (void*) (vfuncp-dlainfo.dli_fbase));
+            }
+            else if (strstr(dlainfo.dli_sname, "__cxa_pure"))
+            {
+                printf("(int (*)(...)) %s\n", dlainfo.dli_sname);
             }
             else if (strstr(dlainfo.dli_sname, "_ZTI"))
             {
@@ -347,10 +365,10 @@ void print_Usage()
 {
     printf("Vtable-Dumper %s\n", TOOL_VERSION);
     printf("A tool to list content of virtual tables in a shared library\n");
-    printf("Copyright (C) 2013 ROSA Laboratory\n");
+    printf("Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory\n");
     printf("License: GNU LGPL or GNU GPL\n\n");
     
-    printf("Usage: vtable-dumper [options] file\n");
+    printf("Usage: vtable-dumper [options] object\n");
     printf("Example: vtable-dumper /usr/lib64/libstdc++.so.6\n");
     printf("Options:\n");
     printf("  -mangled       Show mangled symbol names\n");
