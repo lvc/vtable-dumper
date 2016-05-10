@@ -1,14 +1,17 @@
 prefix ?= /usr
 
-all:
-	gcc dump-vtable.c -o vtable-dumper -ldl -lelf -lstdc++ -Wall
+.PHONY: all install uninstall clean
+all: vtable-dumper
 
-install: all
-	mkdir -p $(prefix)/bin/
-	install vtable-dumper $(prefix)/bin/
+install: vtable-dumper
+	mkdir -p $(DESTDIR)$(prefix)/bin/
+	install vtable-dumper $(DESTDIR)$(prefix)/bin/
+
+vtable-dumper: dump-vtable.c dump-vtable.h
+	$(CC) $(CFLAGS) $(LDFLAGS) -o vtable-dumper dump-vtable.c -ldl -lelf -lstdc++
 
 uninstall:
-	rm -f $(prefix)/bin/vtable-dumper
+	rm -f $(DESTDIR)$(prefix)/bin/vtable-dumper
 
 clean:
 	rm -f vtable-dumper
