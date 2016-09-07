@@ -1,8 +1,8 @@
 /*
- * Vtable-Dumper 1.1
+ * Vtable-Dumper 1.2
  * A tool to list content of virtual tables in a shared library
  * 
- * Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory
+ * Copyright (C) 2013-2016 Andrey Ponomarenko's ABI laboratory
  * 
  * Written by Andrey Ponomarenko
  * 
@@ -33,7 +33,7 @@
 
 #include "dump-vtable.h"
 
-const char* TOOL_VERSION = "1.1";
+const char* TOOL_VERSION = "1.2";
 
 int opt_mangled = 0;
 int opt_demangled = 0;
@@ -118,13 +118,13 @@ int get_VTables(char* file, vtable_info*** vtables)
         }
     }
     
+    elf_end(elf);
+    close(fd);
+    
     if (*vtables == NULL)
     {
         return ERR;
     }
-    
-    elf_end(elf);
-    close(fd);
     
     return 0;
 }
@@ -324,6 +324,17 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     printf("\n\n");
 }
 
+void free_vtables(vtable_info **vtables)
+{
+    int i;
+    for (i = 0; vtables[i] != NULL; i++)
+    {
+        free(vtables[i]->name);
+        free(vtables[i]);
+    }
+    free(vtables);
+}
+
 int print_Info(char* file)
 {
     int i;
@@ -345,18 +356,16 @@ int print_Info(char* file)
         {
             fprintf(stderr, "%s\n", error);
         }
+        free_vtables(vtables);
         return ERR;
     }
     
     for (i = 0; vtables[i] != NULL; i++)
     {
         print_VTable(dlhndl, vtables[i]);
-        free(vtables[i]->name);
-        free(vtables[i]);
     }
     
-    free(vtables);
-    dlclose(dlhndl);
+    free_vtables(vtables);
     
     return 0;
 }
