@@ -93,6 +93,7 @@ int get_VTables(char* file, vtable_info*** vtables)
                 return ERR;
             }
             
+            // Prevent divide by zero.
             if (shdr.sh_entsize == 0)
             {
                 return ERR;
@@ -101,9 +102,20 @@ int get_VTables(char* file, vtable_info*** vtables)
             // This could truncate on a 32bit machine inspecting a 64bit binary.
             symbol_count = shdr.sh_size / shdr.sh_entsize;
 
+            // Check for potential multiplication wraparound.
             if (symbol_count > SIZE_MAX / sizeof(vtable_info*))
             {
                 return ERR;
+            }
+
+            // Add one to symbol_count for NULL storage later.
+            if (SIZE_MAX - 1 < symbol_count)
+            {
+                return ERR;
+            }
+            else 
+            {
+                symbol_count += 1;
             }
             *vtables = (vtable_info**)malloc(sizeof(vtable_info*) * symbol_count);
             
@@ -145,7 +157,6 @@ int get_VTables(char* file, vtable_info*** vtables)
                     free(ssname);
                 }
             }
-            // off by one error
             (*vtables)[num] = NULL;
         }
     }
