@@ -43,9 +43,9 @@ int get_VTables(char* file, vtable_info*** vtables)
     int fd;
     struct stat elf_stats;
     
-    int symbol_count;
-    int num;
-    int i;
+    size_t symbol_count;
+    size_t num;
+    size_t i;
     char *sname, *ssname;
     vtable_info* vt;
     
@@ -73,17 +73,38 @@ int get_VTables(char* file, vtable_info*** vtables)
         printf("WARNING Elf Library is out of date!\n");
     }
     
-    elf = elf_begin(fd, ELF_C_READ, NULL);
-    
+    if ((elf = elf_begin(fd, ELF_C_READ, NULL)) == NULL)
+    {
+        return ERR;
+    }
+
     while ((scn = elf_nextscn(elf, scn)) != NULL)
     {
-        gelf_getshdr(scn, &shdr);
+        if (gelf_getshdr(scn, &shdr) != &shdr)
+        {
+            return ERR;
+        }
         
         if (shdr.sh_type == SHT_DYNSYM)
         {
             edata = elf_getdata(scn, edata);
+            if (edata == NULL)
+            {
+                return ERR;
+            }
             
+            if (shdr.sh_entsize == 0)
+            {
+                return ERR;
+            }
+
+            // This could truncate on a 32bit machine inspecting a 64bit binary.
             symbol_count = shdr.sh_size / shdr.sh_entsize;
+
+            if (symbol_count > SIZE_MAX / sizeof(vtable_info*))
+            {
+                return ERR;
+            }
             *vtables = (vtable_info**)malloc(sizeof(vtable_info*) * symbol_count);
             
             num = 0;
@@ -95,9 +116,19 @@ int get_VTables(char* file, vtable_info*** vtables)
                 { // UND
                     continue;
                 }
-                
+
                 sname = elf_strptr(elf, shdr.sh_link, sym.st_name);
+                if (sname == NULL)
+                {
+                    return ERR;
+                }
+
                 ssname = (char*)malloc(1 + strlen(sname));
+                if (ssname == NULL)
+                {
+                    return ERR;
+                }
+
                 strcpy(ssname, sname);
                 
                 if (strstr(ssname, "_ZTV"))
@@ -114,10 +145,11 @@ int get_VTables(char* file, vtable_info*** vtables)
                     free(ssname);
                 }
             }
+            // off by one error
             (*vtables)[num] = NULL;
         }
     }
-    
+
     elf_end(elf);
     close(fd);
     
@@ -326,7 +358,7 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
 
 void free_vtables(vtable_info **vtables)
 {
-    int i;
+    size_t i;
     for (i = 0; vtables[i] != NULL; i++)
     {
         free(vtables[i]->name);
