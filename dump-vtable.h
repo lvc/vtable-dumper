@@ -31,6 +31,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stddef.h>
+#include <limits.h>
 
 #define ERR -1
 
