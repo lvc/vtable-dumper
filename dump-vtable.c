@@ -417,7 +417,7 @@ void print_Usage()
 {
     printf("Vtable-Dumper %s\n", TOOL_VERSION);
     printf("A tool to list content of virtual tables in a shared library\n");
-    printf("Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory\n");
+    printf("Copyright (C) 2013-2016 Andrey Ponomarenko's ABI laboratory\n");
     printf("License: GNU LGPL or GNU GPL\n\n");
     
     printf("Usage: vtable-dumper [options] object\n");

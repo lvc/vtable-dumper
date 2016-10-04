@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Andrey Ponomarenko's ABI laboratory
+ * Copyright (C) 2013-2016 Andrey Ponomarenko's ABI laboratory
  * 
  * Written by Andrey Ponomarenko
  * 
