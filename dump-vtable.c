@@ -355,11 +355,11 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
             {
                 if ((ptrdiff_t)vfuncp < 0)
                 {
-                    printf("(int (*)(...)) -%016p\n", (void*) -(ptrdiff_t)vfuncp);
+                    printf("(int (*)(...)) -%16p\n", (void*) -(ptrdiff_t)vfuncp);
                 }
                 else
                 {
-                    printf("(int (*)(...)) %016p\n", vfuncp);
+                    printf("(int (*)(...)) %16p\n", vfuncp);
                 }
             }
         }
