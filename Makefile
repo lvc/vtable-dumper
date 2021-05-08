@@ -8,7 +8,7 @@ install: vtable-dumper
 	install vtable-dumper $(DESTDIR)$(prefix)/bin/
 
 vtable-dumper: dump-vtable.c dump-vtable.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o vtable-dumper dump-vtable.c -ldl -lelf -lstdc++
+	$(CXX) $(CFLAGS) $(LDFLAGS) -o vtable-dumper dump-vtable.c -ldl -lelf
 
 uninstall:
 	rm -f $(DESTDIR)$(prefix)/bin/vtable-dumper

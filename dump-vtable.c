@@ -32,7 +32,7 @@
  * MA  02110-1301 USA
  *
  */
-
+#include <cxxabi.h>
 #include "dump-vtable.h"
 
 const char* TOOL_VERSION = "1.2";
@@ -195,11 +195,9 @@ int integer_len (int val)
   return len;
 }
 
-extern char* __cxa_demangle ( const char* mangled_name,  char* output_buffer, size_t* length, int* status ); // from libstdc++ ( cxxabi.h )
-
 char *
 demangle(const char *mangled_name) {
-    return __cxa_demangle(mangled_name, NULL, 0, NULL);
+    return __cxxabiv1::__cxa_demangle(mangled_name, NULL, 0, NULL);
 }
 
 void print_VTable(void *dlhndl, vtable_info *vtable)
@@ -223,7 +221,7 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     printf("%s\n", demngl);
     free(demngl);
     
-    vtablep = dlsym(dlhndl, vtable->name);
+    vtablep = (union classvtable_mem *)dlsym(dlhndl, vtable->name);
     
     vtbaseoffset = vtablep->cat1.baseoffset;
     vttypeinfo = vtablep->cat1.typeinfo;
@@ -287,7 +285,7 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
             printf("%08x ", sosymbol->st_value);
             if (dlainfo.dli_sname==NULL)
             {
-                printf("%p\n", (void*) (vfuncp-dlainfo.dli_fbase));
+                printf("%p\n", (void*) ((unsigned long)vfuncp-(unsigned long)dlainfo.dli_fbase));
             }
             else if (strstr(dlainfo.dli_sname, "__cxa_pure"))
             {
