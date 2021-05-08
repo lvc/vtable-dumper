@@ -239,7 +239,7 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     }
     else
     {
-        printf("%d     (int (*)(...)) 0\n", offset);
+        printf("%d     %016x\n", offset, 0);
     }
     
     offset += step;
@@ -263,9 +263,9 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     else
     {
         if (vtbaseoffset!=0)
-            printf("%d     0u\n", offset);
+            printf("%d     00000000 0u\n", offset);
         else
-            printf("%d     (int (*)(...)) 0\n", offset);
+            printf("%d     00000000 0\n", offset);
     }
     
     for (i = 0; i <= size - 3; i++)
@@ -289,22 +289,22 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
             }
             else if (strstr(dlainfo.dli_sname, "__cxa_pure"))
             {
-                printf("(int (*)(...)) %s\n", dlainfo.dli_sname);
+                printf("%s\n", dlainfo.dli_sname);
             }
             else if (strstr(dlainfo.dli_sname, "_ZTI"))
             {
                 demngl = demangle(dlainfo.dli_sname);
                 if(opt_mangled==1 && opt_demangled==1)
                 {
-                    printf("(int (*)(...)) (& %s) [%s]\n", demngl, dlainfo.dli_sname);
+                    printf("(& %s) [%s]\n", demngl, dlainfo.dli_sname);
                 }
                 else if(opt_demangled==1)
                 {
-                    printf("(int (*)(...)) (& %s)\n", demngl);
+                    printf("(& %s)\n", demngl);
                 }
                 else
                 { // show mangled name by default
-                    printf("(int (*)(...)) (& %s)\n", dlainfo.dli_sname);
+                    printf("(& %s)\n", dlainfo.dli_sname);
                 }
                 free(demngl);
             }
@@ -314,26 +314,26 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
                 
                 if(opt_mangled==1 && opt_demangled==1)
                 {
-                    printf("(int (*)(...)) %s [%s]\n", demngl, dlainfo.dli_sname);
+                    printf("%s [%s]\n", demngl, dlainfo.dli_sname);
                 }
                 else if(opt_demangled==1)
                 {
-                    printf("(int (*)(...)) %s\n", demngl);
+                    printf("%s\n", demngl);
                 }
                 else if(opt_mangled==1)
                 {
-                    printf("(int (*)(...)) %s\n", dlainfo.dli_sname);
+                    printf("%s\n", dlainfo.dli_sname);
                 }
                 else
                 {
                     if(strstr(dlainfo.dli_sname, "_ZN") == NULL)
                     { // _ZThn, _ZTv, __cxa, etc.
                       // show mangled name by default
-                        printf("(int (*)(...)) %s\n", dlainfo.dli_sname);
+                        printf("%s\n", dlainfo.dli_sname);
                     }
                     else
                     {
-                        printf("(int (*)(...)) %s\n", demngl);
+                        printf("%s\n", demngl);
                     }
                 }
                 
@@ -355,11 +355,11 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
             {
                 if ((ptrdiff_t)vfuncp < 0)
                 {
-                    printf("(int (*)(...)) -%016p\n", (void*) -(ptrdiff_t)vfuncp);
+                    printf("-%016p\n", (void*) -(ptrdiff_t)vfuncp);
                 }
                 else
                 {
-                    printf("(int (*)(...)) %016p\n", vfuncp);
+                    printf("%016p\n", vfuncp);
                 }
             }
         }
