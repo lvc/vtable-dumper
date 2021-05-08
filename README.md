@@ -26,7 +26,6 @@ Install
 
 * libelf
 * libdl
-* libstdc++
 
 Usage
 -----
@@ -54,7 +53,6 @@ Usage
 ###### Sample output
 
     Vtable for QIconEnginePlugin
-    _ZTV17QIconEnginePlugin: 22 entries
     0     (int (*)(...)) 0
     8     (int (*)(...)) (& _ZTI17QIconEnginePlugin)
     16    (int (*)(...)) QIconEnginePlugin::metaObject() const
