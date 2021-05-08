@@ -216,6 +216,7 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     char* demngl;
     int size;
     int space;
+    Elf32_Sym* sosymbol;
     
     demngl = demangle(vtable->name);
     demngl[0] = toupper(demngl[0]);
@@ -243,20 +244,20 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     }
     
     offset += step;
-    if (dladdr(vttypeinfo, &dlainfo))
+    if (dladdr1(vttypeinfo, &dlainfo, (void**)&sosymbol, RTLD_DL_SYMENT))
     {
         demngl = demangle(dlainfo.dli_sname);
         if(opt_mangled==1 && opt_demangled==1)
         {
-            printf("%d     (int (*)(...)) (& %s) [%s]\n", offset, demngl, dlainfo.dli_sname);
+            printf("%d    %08x (& %s) [%s]\n", offset, sosymbol->st_value, demngl, dlainfo.dli_sname);
         }
         else if(opt_demangled==1)
         {
-            printf("%d     (int (*)(...)) (& %s)\n", offset, demngl);
+            printf("%d    %08x (& %s)\n", offset, sosymbol->st_value, demngl);
         }
         else
         { // show mangled name by default
-            printf("%d     (int (*)(...)) (& %s)\n", offset, dlainfo.dli_sname);
+            printf("%d     %08x (& %s)\n", offset, sosymbol->st_value, dlainfo.dli_sname);
         }
         free(demngl);
     }
@@ -276,16 +277,17 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
         
         space = 5 - integer_len(offset);
         
-        if (dladdr(vfuncp, &dlainfo))
+        if (dladdr1(vfuncp, &dlainfo, (void**)&sosymbol, RTLD_DL_SYMENT))
         {
             printf("%d", offset);
             for (j = 0; j<=space; j++)
             {
                 printf(" ");
             }
+            printf("%08x ", sosymbol->st_value);
             if (dlainfo.dli_sname==NULL)
             {
-                printf("(int (*)(...)) %p\n", (void*) (vfuncp-dlainfo.dli_fbase));
+                printf("%p\n", (void*) (vfuncp-dlainfo.dli_fbase));
             }
             else if (strstr(dlainfo.dli_sname, "__cxa_pure"))
             {
