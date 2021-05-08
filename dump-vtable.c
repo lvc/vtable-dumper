@@ -230,8 +230,6 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
     
     size = vtable->size/sizeof(ptrdiff_t);
     
-    printf("%s: %d entries\n", vtable->name, size);
-    
     step = sizeof(ptrdiff_t);
     
     offset = 0;
