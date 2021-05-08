@@ -200,6 +200,41 @@ demangle(const char *mangled_name) {
     return __cxxabiv1::__cxa_demangle(mangled_name, NULL, 0, NULL);
 }
 
+static void print_Typeinfo_name(const char* name)
+{
+    char* demngl = demangle(name);
+    if(opt_mangled==1 && opt_demangled==1)
+    {
+	printf("Inherit from %s [%s]\n", demngl, name);
+    }
+    else if(opt_demangled==1)
+    {
+	printf("Inherit from %s\n", demngl);
+    }
+    else
+    {
+	printf("Inherit from %s\n", name);
+    }
+    free(demngl);
+}
+
+static void print_Typeinfo(std::type_info* typeinfo)
+{
+    if (typeid(*typeinfo) == typeid(__cxxabiv1::__si_class_type_info))
+    {
+	__cxxabiv1::__si_class_type_info* info = dynamic_cast<__cxxabiv1::__si_class_type_info*>(typeinfo);
+	print_Typeinfo_name(info->__base_type->name());
+    }
+    else if (typeid(*typeinfo) == typeid(__cxxabiv1::__vmi_class_type_info))
+    {
+	__cxxabiv1::__vmi_class_type_info* info = dynamic_cast<__cxxabiv1::__vmi_class_type_info*>(typeinfo);
+	for(int i=0; i<info->__base_count; i++)
+	{
+	    print_Typeinfo_name(info->__base_info[i].__base_type->name());
+	}
+    }
+}
+
 void print_VTable(void *dlhndl, vtable_info *vtable)
 {
     union classvtable_mem *vtablep;
@@ -247,17 +282,18 @@ void print_VTable(void *dlhndl, vtable_info *vtable)
         demngl = demangle(dlainfo.dli_sname);
         if(opt_mangled==1 && opt_demangled==1)
         {
-            printf("%d    %08x (& %s) [%s]\n", offset, sosymbol->st_value, demngl, dlainfo.dli_sname);
+            printf("%d     %08x (& %s) [%s]\n", offset, sosymbol->st_value, demngl, dlainfo.dli_sname);
         }
         else if(opt_demangled==1)
         {
-            printf("%d    %08x (& %s)\n", offset, sosymbol->st_value, demngl);
+            printf("%d     %08x (& %s)\n", offset, sosymbol->st_value, demngl);
         }
         else
         { // show mangled name by default
             printf("%d     %08x (& %s)\n", offset, sosymbol->st_value, dlainfo.dli_sname);
         }
         free(demngl);
+	print_Typeinfo((std::type_info*)dlainfo.dli_saddr);
     }
     else
     {
